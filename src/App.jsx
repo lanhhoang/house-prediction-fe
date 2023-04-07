@@ -1,35 +1,67 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import axios from "axios";
+import "./App.css";
+
+const localApiBaseUrl = import.meta.env.VITE_LOCAL_API_BASE_URL;
+const prodApiBaseUrl = import.meta.env.VITE_PROD_API_BASE_URL;
+const baseUrl = import.meta.env.PROD ? prodApiBaseUrl : localApiBaseUrl;
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [data, setData] = useState({
+    aveRooms: "",
+    aveBedrms: "",
+  });
+  const [result, setResult] = useState({
+    rSquare: null,
+    predicted: null,
+  });
+
+  const handleChange = (event) => {
+    setData({ ...data, [event.target.name]: event.target.value });
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const { aveRooms, aveBedrms } = data;
+    const response = await axios.post(`${baseUrl}/predict`, {
+      aveRooms,
+      aveBedrms,
+    });
+    setResult({
+      ...result,
+      rSquare: response.data.r_square,
+      predicted: response.data.y_pred,
+    });
+  };
 
   return (
     <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Average Rooms:
+          <input
+            type="number"
+            name="aveRooms"
+            value={data.aveRooms}
+            onChange={handleChange}
+          />
+        </label>
+        <label>
+          Average Bedrooms:
+          <input
+            type="number"
+            name="aveBedrms"
+            value={data.aveBedrms}
+            onChange={handleChange}
+          />
+        </label>
+        <br />
+        <button type="submit">Submit</button>
+      </form>
+      {result.rSquare && <p>R-Square: {result.rSquare}</p>}
+      {result.predicted && <p>Predicted Result: {result.predicted}</p>}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
