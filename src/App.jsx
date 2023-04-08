@@ -6,15 +6,12 @@ import {
   Col,
   Container,
   Form,
-  Nav,
   Navbar,
   Row,
 } from "react-bootstrap";
 import axios from "axios";
 
-const localApiBaseUrl = import.meta.env.VITE_LOCAL_API_BASE_URL;
-const prodApiBaseUrl = import.meta.env.VITE_PROD_API_BASE_URL;
-const baseUrl = import.meta.env.PROD ? prodApiBaseUrl : localApiBaseUrl;
+const baseUrl = import.meta.env.VITE_API_URL;
 
 function App() {
   const [data, setData] = useState({
