@@ -1,35 +1,125 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import {
+  Button,
+  ButtonGroup,
+  Card,
+  Col,
+  Container,
+  Form,
+  Nav,
+  Navbar,
+  Row,
+} from "react-bootstrap";
+import axios from "axios";
+
+const localApiBaseUrl = import.meta.env.VITE_LOCAL_API_BASE_URL;
+const prodApiBaseUrl = import.meta.env.VITE_PROD_API_BASE_URL;
+const baseUrl = import.meta.env.PROD ? prodApiBaseUrl : localApiBaseUrl;
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [data, setData] = useState({
+    aveRooms: "",
+    aveBedrms: "",
+  });
+  const [result, setResult] = useState({
+    rSquare: null,
+    predicted: null,
+  });
+
+  const handleChange = (event) => {
+    setData({ ...data, [event.target.name]: event.target.value });
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const { aveRooms, aveBedrms } = data;
+    const response = await axios.post(`${baseUrl}/predict`, {
+      aveRooms,
+      aveBedrms,
+    });
+    setResult({
+      ...result,
+      rSquare: response.data.r_square,
+      predicted: response.data.y_pred,
+    });
+  };
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    <Container>
+      <Navbar bg="light" variant="light" expand="lg">
+        <Container>
+          <Navbar.Brand>Group 4: Housing Price Prediction</Navbar.Brand>
+        </Container>
+      </Navbar>
+      <Row>
+        <Col xs={3}></Col>
+        <Col xs={6}>
+          <Card border="primary" className="mt-3">
+            <Card.Header>Overview</Card.Header>
+            <Card.Body>
+              <Card.Text>
+                The project is an application using Polynomial Regression model
+                to train and test the real estate data. The dataset is from
+                California housing data. The application uses only the two
+                features AveRooms and AveBedrms (out of the eight features).
+              </Card.Text>
+              <Card.Text>
+                Enter some values in the two below inputs and click the Predict
+                button to receive the predicted response.
+              </Card.Text>
+            </Card.Body>
+          </Card>
+
+          <Form onSubmit={handleSubmit} className="mt-3">
+            <Form.Group className="mb-3" controlId="formAveRooms">
+              <Form.Label>Average Rooms:</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter number of average rooms, e.g. 5.0 "
+                name="aveRooms"
+                value={data.aveRooms}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formAveBedrms">
+              <Form.Label>Average Bedrooms:</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter number of average bedrooms, e.g. 2.0"
+                name="aveBedrms"
+                value={data.aveBedrms}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+
+            <ButtonGroup className="d-flex justify-content-end">
+              <Button variant="primary" type="submit">
+                Predict
+              </Button>
+            </ButtonGroup>
+          </Form>
+
+          <Card border="success" className="mt-3">
+            <Card.Header>Result</Card.Header>
+            <Card.Body>
+              {result.rSquare && (
+                <Card.Text>
+                  R-Square (Coefficient of determination): {result.rSquare}
+                </Card.Text>
+              )}
+              {result.predicted && (
+                <Card.Text>Predicted Result: {result.predicted}</Card.Text>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col xs={3}></Col>
+      </Row>
+    </Container>
+  );
 }
 
-export default App
+export default App;
