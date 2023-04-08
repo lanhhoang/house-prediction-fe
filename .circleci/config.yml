@@ -8,8 +8,8 @@ jobs:
       - checkout
 
       - run:
-          name: Update NPM
-          command: "sudo npm install -g yarn"
+          name: Update Yarn
+          command: "sudo npm install -g yarn --force"
       - restore_cache:
           key: dependency-cache-{{ checksum "yarn.lock" }}
       - run:
