@@ -55,16 +55,20 @@ function App() {
         <Col xs={3}></Col>
         <Col xs={6}>
           <Card border="primary" className="mt-3">
-            <Card.Header>Overview</Card.Header>
+            <Card.Header>
+              <strong>Description</strong>
+            </Card.Header>
             <Card.Body>
               <Card.Text>
-                The project is an application using Polynomial Regression model
-                to train and test the real estate data. The dataset is from
-                California housing data. The application uses only the two
-                features AveRooms and AveBedrms (out of the eight features).
+                The full-stack AI application is built by using Python, Flask,
+                Scikit-learn, Pandas, NumPy, and React. The project uses Linear
+                Regression and Polynomial Regression to preprocesss, train and
+                test the real estate data. The dataset is from California
+                housing data. The application uses only the two features
+                AveRooms and AveBedrms out of the eight features.
               </Card.Text>
               <Card.Text>
-                Enter some values in the two below inputs and click the Predict
+                Enter values in the two below inputs and click the Predict
                 button to receive the predicted response.
               </Card.Text>
             </Card.Body>
@@ -103,7 +107,9 @@ function App() {
           </Form>
 
           <Card border="success" className="mt-3">
-            <Card.Header>Result</Card.Header>
+            <Card.Header>
+              <strong>Result</strong>
+            </Card.Header>
             <Card.Body>
               {result.rSquare && (
                 <Card.Text>
