@@ -22,6 +22,7 @@ function App() {
     rSquare: null,
     predicted: null,
   });
+  const [isLoading, setLoading] = useState(false);
 
   const handleChange = (event) => {
     setData({ ...data, [event.target.name]: event.target.value });
@@ -29,6 +30,7 @@ function App() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
     const { aveRooms, aveBedrms } = data;
     const response = await axios.post(`${baseUrl}/predict`, {
       aveRooms,
@@ -39,6 +41,7 @@ function App() {
       rSquare: response.data.r_square,
       predicted: response.data.y_pred,
     });
+    setLoading(false);
   };
 
   return (
@@ -93,8 +96,8 @@ function App() {
             </Form.Group>
 
             <ButtonGroup className="d-flex justify-content-end">
-              <Button variant="primary" type="submit">
-                Predict
+              <Button variant="primary" disabled={isLoading} type="submit">
+                {isLoading ? "Loading..." : "Predict"}
               </Button>
             </ButtonGroup>
           </Form>
